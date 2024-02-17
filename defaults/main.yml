@@ -1,0 +1,3 @@
+---
+# should we do a version check? (recomended)
+submodules_versioncheck: false

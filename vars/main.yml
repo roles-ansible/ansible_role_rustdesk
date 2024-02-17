@@ -1,0 +1,4 @@
+---
+# versionscheck
+playbook_version_number: 02   # should be a integer
+playbook_version_path: 'role-<some_unique_string>.version'
