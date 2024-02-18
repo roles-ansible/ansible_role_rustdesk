@@ -2,7 +2,6 @@
 galaxy_info:
   role_name: rustdesk
   author: l3d
-  namespace: 'roles-ansible'
   description: Ansible role to install and configure rustdesk-server.
   license: "MIT"
   min_ansible_version: "2.16"
