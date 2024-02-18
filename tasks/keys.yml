@@ -7,32 +7,17 @@
         src: "{{ rustdesk__home }}/id_ed25519.pub"
       register: _rustdesk_pubkey
   rescue:
-    - name: Run Rustdesk Signal Server once to generate pubkey
-      ansible.builtin.command:
-        cmd: "{{ rustdesk__rustdesk_utils_executable_path }} genkeypair"
-      register: _rustdesk_gen_keys
-
-    - name: Write secret key to Server
-      ansible.builtin.copy:
-        content: "{{ _rustdesk_gen_keys.stdout_lines[1].split(':') | last | trim }}"
-        dest: "{{ rustdesk__home }}/id_ed25519"
-        mode: '0644'
-        owner: "{{ rustdesk__user }}"
-        group: "{{ rustdesk__group }}"
-
-    - name: Write public key to Server
-      ansible.builtin.copy:
-        content: "{{ _rustdesk_gen_keys.stdout_lines[0].split(':') | last | trim }}"
-        dest: "{{ rustdesk__home }}/id_ed25519.pub"
-        mode: '0644'
-        owner: "{{ rustdesk__user }}"
-        group: "{{ rustdesk__group }}"
+    - name: Run systemd setup to initially start rustdesk service and generate pubkeys
+      ansible.builtin.include_tasks:
+        file: 'install_systemd.yml'
+      when: ansible_service_mgr == "systemd"
 
     - name: Get public key of rustdesk
       ansible.builtin.slurp:
         src: "{{ rustdesk__home }}/id_ed25519.pub"
       register: _rustdesk_pubkey
 
-- name: debug
+- name: Show Rustdesk Public Key
   ansible.builtin.debug:
-    msg: "Pubkey: {{ _rustdesk_pubkey.content }}"
+    msg: "Pubkey: {{ _rustdesk_pubkey.content | b64decode }}"
+    verbosity: 1

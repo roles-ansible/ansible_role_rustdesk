@@ -12,5 +12,5 @@ rustdesk__dl_filename: "rustdesk-server-{{ ansible_system }}-{{ rustdesk__arch }
 rustdesk__dl_url: "https://github.com/rustdesk/rustdesk-server/releases/download/{{ rustdesk__version_target }}/{{ rustdesk__dl_filename }}.zip"
 
 # versionscheck
-playbook_version_number: 3
+playbook_version_number: 4
 playbook_version_path: 'role_l3d.rustdesk.version'

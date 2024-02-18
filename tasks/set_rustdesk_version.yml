@@ -60,11 +60,6 @@
     rustdesk__version_target: "{{ rustdesk__version }}"
   when: rustdesk__version != "latest"
 
-- ansible.builtin.debug:
-    msg: |
-      rustdesk__hbbr_active_version.stdout: {{ rustdesk__hbbr_active_version.stdout[:-2] }}
-      rustdesk__remote_version: {{ rustdesk__remote_version[:-2] }}
-
 - name: 'Assert that remote version is higher'
   ansible.builtin.assert:
     that:

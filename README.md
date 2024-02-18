@@ -5,4 +5,9 @@
  ansible_role_template
 =======================
 
+DOCS: https://rustdesk.com/docs/en/self-host/
+Core Ports:
+TCP 21115-21117
+UDP 21116
+
 WORK IN PROGRESS!
