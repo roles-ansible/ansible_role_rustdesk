@@ -1,6 +1,7 @@
 ---
 - name: Make sure there is a key for rustdesk
   become: true
+  when: rustdesk__require_key | bool
   block:
     - name: Get public key of rustdesk
       ansible.builtin.slurp:
@@ -17,7 +18,10 @@
         src: "{{ rustdesk__home }}/id_ed25519.pub"
       register: _rustdesk_pubkey
 
-- name: Show Rustdesk Public Key
+- name: Show Rustdesk Login Info
   ansible.builtin.debug:
-    msg: "Pubkey: {{ _rustdesk_pubkey.content | b64decode }}"
-    verbosity: 1
+    msg: |
+      Rustdesk ID Server: {{ rustdesk__relay_server_domain }}:{{ rustdesk__signal_server_port }}
+      Rustdesk Relay Server: {{  rustdesk__relay_server_domain }}:{{ rustdesk__relay_server_port }}
+      No API Server.
+      Key: {{ _rustdesk_pubkey.content | b64decode }}
