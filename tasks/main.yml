@@ -20,7 +20,11 @@
   ansible.builtin.include_tasks:
     file: 'directory.yml'
 
-# - name: Setup homebox systemd service
-#   ansible.builtin.include_tasks:
-#     file: 'install_systemd.yml'
-#   when: ansible_service_mgr == "systemd"
+- name: Create Keys for rustdesk
+  ansible.builtin.include_tasks:
+    file: 'keys.yml'
+
+- name: Setup homebox systemd service
+  ansible.builtin.include_tasks:
+    file: 'install_systemd.yml'
+  when: ansible_service_mgr == "systemd"

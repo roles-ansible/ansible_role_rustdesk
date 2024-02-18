@@ -1,0 +1,26 @@
+---
+- name: "Restart Rustdesk Signal Server"
+  listen: 'systemctl restart rustdesk-hbbs'
+  become: true
+  ansible.builtin.systemd:
+    name: rustdesk-hbbs
+    state: restarted
+  when: ansible_service_mgr == "systemd"
+
+- name: "Restart Rustdesk Relay Server"
+  listen: 'systemctl restart rustdesk-hbbr'
+  become: true
+  ansible.builtin.systemd:
+    name: rustdesk-hbbr
+    state: restarted
+  when: ansible_service_mgr == "systemd"
+
+- name: "Reload systemd"
+  listen: 'systemctl daemon-reload'
+  become: true
+  ansible.builtin.systemd:
+    daemon_reload: true
+  when: ansible_service_mgr == "systemd"
+  notify:
+    - 'systemctl restart rustdesk-hbbs'
+    - 'systemctl restart rustdesk-hbbr'

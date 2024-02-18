@@ -1,0 +1,38 @@
+---
+- name: Make sure there is a key for rustdesk
+  become: true
+  block:
+    - name: Get public key of rustdesk
+      ansible.builtin.slurp:
+        src: "{{ rustdesk__home }}/id_ed25519.pub"
+      register: _rustdesk_pubkey
+  rescue:
+    - name: Run Rustdesk Signal Server once to generate pubkey
+      ansible.builtin.command:
+        cmd: "{{ rustdesk__rustdesk_utils_executable_path }} genkeypair"
+      register: _rustdesk_gen_keys
+
+    - name: Write secret key to Server
+      ansible.builtin.copy:
+        content: "{{ _rustdesk_gen_keys.stdout_lines[1].split(':') | last | trim }}"
+        dest: "{{ rustdesk__home }}/id_ed25519"
+        mode: '0644'
+        owner: "{{ rustdesk__user }}"
+        group: "{{ rustdesk__group }}"
+
+    - name: Write public key to Server
+      ansible.builtin.copy:
+        content: "{{ _rustdesk_gen_keys.stdout_lines[0].split(':') | last | trim }}"
+        dest: "{{ rustdesk__home }}/id_ed25519.pub"
+        mode: '0644'
+        owner: "{{ rustdesk__user }}"
+        group: "{{ rustdesk__group }}"
+
+    - name: Get public key of rustdesk
+      ansible.builtin.slurp:
+        src: "{{ rustdesk__home }}/id_ed25519.pub"
+      register: _rustdesk_pubkey
+
+- name: debug
+  ansible.builtin.debug:
+    msg: "Pubkey: {{ _rustdesk_pubkey.content }}"

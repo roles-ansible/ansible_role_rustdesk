@@ -1,5 +1,5 @@
 ---
-- name: "Create config and data directory"
+- name: "Create rustdesk home"
   become: true
   ansible.builtin.file:
     path: "{{ item }}"
