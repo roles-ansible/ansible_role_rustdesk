@@ -1,7 +1,8 @@
-[![Ansible Galaxy](https://ansible.l3d.space/svg/$namespace.$role.svg)](https://galaxy.ansible.com/ui/standalone/roles/$namespace/$role/)
-[![BSD-3 Clause](https://ansible.l3d.space/svg/$namespace.$role_license.svg)](LICENSE)
-[![Maintainance](https://ansible.l3d.space/svg/$namespace.$role_maintainance.svg)](https://ansible.l3d.space/#$namespace.$role)
+[![Ansible Galaxy](https://ansible.l3d.space/svg/l3d.rustdesk.svg)](https://galaxy.ansible.com/ui/standalone/roles/l3d/rustdesk/)
+[![BSD-3 Clause](https://ansible.l3d.space/svg/l3d.rustdesk_license.svg)](LICENSE)
+[![Maintainance](https://ansible.l3d.space/svg/l3d.rustdesk_maintainance.svg)](https://ansible.l3d.space/#l3d.rustdesk)
 
  ansible_role_template
 =======================
-Template for Ansible roles
+
+WORK IN PROGRESS!
