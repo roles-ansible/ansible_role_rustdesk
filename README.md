@@ -1,40 +1,41 @@
-[![Ansible Galaxy](https://ansible.l3d.space/svg/l3d.rustdesk.svg)](https://galaxy.ansible.com/ui/standalone/roles/l3d/rustdesk/)
-[![MIT](https://ansible.l3d.space/svg/l3d.rustdesk_license.svg)](LICENSE)
-[![Maintainance](https://ansible.l3d.space/svg/l3d.rustdesk_maintainance.svg)](https://ansible.l3d.space/#l3d.rustdesk)
+[![Ansible Galaxy](https://ansible.l3d.space/svg/roles-ansible.rustdesk.svg)](https://galaxy.ansible.com/ui/standalone/roles/roles-ansible/rustdesk/)
+[![MIT](https://ansible.l3d.space/svg/roles-ansible.rustdesk_license.svg)](LICENSE)
+[![Maintainance](https://ansible.l3d.space/svg/roles-ansible.rustdesk_maintainance.svg)](https://ansible.l3d.space/#roles-ansible.rustdesk)
 
- ansible_role_template
+ ansible role rustdesk
 =======================
 Ansible role to install a selfhosted rustdesk-server.
 
-DOCS: https://rustdesk.com/docs/en/self-host/
-Core Ports:
-TCP 21115-21117
-UDP 21116
+You can find more information about hosting rustdesk for yourself at [rustdesk.com/docs](https://rustdesk.com/docs/en/self-host/).
 
-## Variables:
+ Rustdesk Requirements
+=======================
+To kommunikate with rustdesk, you need to open these Ports on the rustdesk server:
++ TCP Ports: ``21115-21117``
++ UDP Ports: ``21116``
 
-```yml
----
-rustdesk__version: 'latest'
+*Some of the Ports can be changed in the config*
 
-rustdesk__user: 'rustdesk'
-rustdesk__group: "{{ rustdesk__user }}"
-rustdesk__home: '/var/lib/rustdesk'
-rustdesk__user_home: "{{ rustdesk__home }}"
-rustdesk__ignore_version_mismatch: false
-rustdesk__require_key: true
-rustdesk__relay_server_domain: "{{ ansible_fqdn }}"
-rustdesk__relay_server_port: '21117'
-rustdesk__signal_server_port: '21116'
+## Ansible Role Variables
 
-rustdesk__hbbr_executable_path: '/usr/local/bin/hbbr'
-rustdesk__hbbs_executable_path: '/usr/local/bin/hbbs'
-rustdesk__rustdesk_utils_executable_path: '/usr/local/bin/rustdesk-utils'
+| Variable | Value | Description |
+| --- | --- | --- |
+| ``rustdesk__version`` | ``latest`` | Specify the wanted rustdesk release or install latest |
+| ``rustdesk__user`` | ``rustdesk`` | Unix User Name |
+| ``rustdesk__group`` | ``{{ rustdesk__user }}`` | Unix Group Name |
+| ``rustdesk__home`` | ``/var/lib/rustdesk`` | Application Working Enviroment |
+| ``rustdesk__user_home`` | ``{{ rustdesk__home }}`` | Unix Home |
+| ``rustdesk__ignore_version_mismatch`` | ``false`` | Ignore the fact that hbbs and hbbr versions mismatch. *(not recomended)* |
+| ``rustdesk__require_key`` | ``true`` | prohibit users without the key from establishing non-encrypted connections |
+| ``rustdesk__relay_server_domain`` | ``{{ ansible_fqdn }}`` | What is the Domain/IP from your rustdesk relay server? |
+| ``rustdesk__relay_server_port`` | ``21117`` | Rustdesk Relay Port |
+| ``rustdesk__signal_server_port`` | ``21116`` | Rustdesk Signal Server Port |
+| ``rustdesk__hbbr_executable_path`` | ``/usr/local/bin/hbbr`` | Rustdesk relay server executable |
+| ``rustdesk__hbbs_executable_path`` | ``/usr/local/bin/hbbs`` | Rustdesk signal server executable |
+| ``rustdesk__rustdesk_utils_executable_path`` | ``/usr/local/bin/rustdesk-utils`` | Rustdesk utils path executable |
+| ``submodules_versioncheck`` | ``false`` | Run simple Versionscheck *(recomended)* |
 
-# should we do a version check? (recomended)
-submodules_versioncheck: false
-```
-
-# TODOs
-+ Create more fancy DOCs
-+ Create logos on ansible.l3d.space
+ License
+=========
++ This Ansible role us under [MIT License](LICENSE).
++ Please feel free to open a issue or pull-request.
