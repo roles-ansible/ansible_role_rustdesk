@@ -1,0 +1,15 @@
+---
+- name: "Create config and data directory"
+  become: true
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ rustdesk__user }}"
+    group: "{{ rustdesk__group }}"
+    mode: 'u=rwX,g=rX,o='
+  loop:
+    - "{{ rustdesk__home }}"
+    - "{{ rustdesk__user_home }}"
+  notify:
+    - 'systemctl restart rustdesk-hbbs'
+    - 'systemctl restart rustdesk-hbbr'

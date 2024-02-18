@@ -1,0 +1,69 @@
+---
+- name: "Check rustdesk hbbr installed version"
+  ansible.builtin.shell: "set -eo pipefail; {{ rustdesk__hbbr_executable_path }} --version | cut -d ' ' -f2"
+  args:
+    executable: /bin/bash
+  register: rustdesk__hbbr_active_version
+  changed_when: false
+  failed_when: false
+
+- name: "Check rustdesk hbbs installed version"
+  ansible.builtin.shell: "set -eo pipefail; {{ rustdesk__hbbs_executable_path }} --version | cut -d ' ' -f2"
+  args:
+    executable: /bin/bash
+  register: rustdesk__hbbs_active_version
+  changed_when: false
+  failed_when: false
+
+- name: Fail if versions are not identical
+  ansible.builtin.fail:
+    msg: |
+      Versios of rustdesk-server components mismatch.
+      {{ rustdesk__hbbr_executable_path }}: rustdesk__hbbr_active_version
+      {{ rustdesk__hbbs_executable_path }}: rustdesk__hbbs_active_version
+      You can Ignore it by running ansible again with
+      -e rustdesk__ignore_version_mismatch=true
+  when:
+    - rustdesk__hbbr_active_version != rustdesk__hbbs_active_version
+    - rustdesk__ignore_version_mismatch | bool
+
+- name: "Determine 'latest' version release"
+  when: rustdesk__version == "latest"
+  block:
+    - name: "Get latest rustdesk release metadata"
+      ansible.builtin.uri:
+        url: https://api.github.com/repos/rustdesk/rustdesk-server/releases/latest
+        return_content: true
+      register: rustdesk__remote_metadata
+      become: false
+      when: not ansible_check_mode
+
+    - name: "Fail if running in check mode without versions set."
+      ansible.builtin.fail:
+        msg: |
+          "You are running this playbook in check mode:
+          Please set the rustdesk version with the variable 'rustdesk__version', because the URI module cannot detect the latest version in this mode."
+      when: ansible_check_mode and (rustdesk__version == 'latest' or rustdesk__version == 'present')
+
+    - name: "Set fact latest rustdesk release"
+      ansible.builtin.set_fact:
+        rustdesk__remote_version: "{{ rustdesk__remote_metadata.json.tag_name }}"
+      when: not ansible_check_mode
+
+    - name: "Set rustdesk version target (latest)"
+      ansible.builtin.set_fact:
+        rustdesk__version_target: "{{ rustdesk__remote_version }}"
+      when: not ansible_check_mode
+
+- name: "Set rustdesk version target {{ rustdesk__version }}"
+  ansible.builtin.set_fact:
+    rustdesk__version_target: "{{ rustdesk__version }}"
+  when: rustdesk__version != "latest"
+
+- name: 'Assert that remote version is higher'
+  ansible.builtin.assert:
+    that:
+      - rustdesk__hbbr_active_version is version(rustdesk__remote_version, 'lt')
+    fail_msg: ERROR - Remote version is lower then current version!
+  when:
+    - rustdesk__version == "latest" and rustdesk__hbbr_active_version.stderr == ""

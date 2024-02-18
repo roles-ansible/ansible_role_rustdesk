@@ -1,0 +1,18 @@
+---
+- name: "Create rustdesk Group"
+  become: true
+  ansible.builtin.group:
+    name: "{{ rustdesk__group }}"
+    system: true
+    state: "present"
+
+- name: "Create rustdesk user"
+  become: true
+  ansible.builtin.user:
+    name: "{{ rustdesk__user }}"
+    comment: "rustdesk user"
+    group: "{{ rustdesk__group }}"
+    groups: "{{ rustdesk__groups | default(omit) }}"
+    home: "{{ rustdesk__user_home }}"
+    shell: "/usr/sbin/nologin"
+    system: true

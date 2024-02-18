@@ -3,3 +3,24 @@
   ansible.builtin.include_tasks:
     file: 'versioncheck.yml'
   when: submodules_versioncheck | bool
+
+- name: Gather versioning information
+  ansible.builtin.include_tasks:
+    file: "set_rustdesk_version.yml"
+
+- name: Create homebox user and group
+  ansible.builtin.include_tasks:
+    file: 'create_user.yml'
+
+- name: Install or Update homebox
+  ansible.builtin.include_tasks:
+    file: 'install.yml'
+
+- name: Create directories
+  ansible.builtin.include_tasks:
+    file: 'directory.yml'
+
+# - name: Setup homebox systemd service
+#   ansible.builtin.include_tasks:
+#     file: 'install_systemd.yml'
+#   when: ansible_service_mgr == "systemd"
