@@ -1,0 +1,22 @@
+{{ ansible_managed | comment }}
+[Unit]
+Description=Rustdesk Signal Server
+After=network.target
+Before=rustdesk-hbbr.service
+
+[Service]
+Type=simple
+{% if rustdesk__require_key | bool %}
+ExecStart={{ rustdesk__hbbs_executable_path }} --port {{ rustdesk__signal_server_port }} --relay-servers {{ rustdesk__relay_server_domain }}:{{ rustdesk__relay_server_port }} --key _
+{% else %}
+ExecStart={{ rustdesk__hbbs_executable_path }} --port {{ rustdesk__signal_server_port }} --relay-servers {{ rustdesk__relay_server_domain }}:{{ rustdesk__relay_server_port }}
+{% endif %}
+WorkingDirectory={{ rustdesk__home }}
+User={{ rustdesk__user }}
+Group={{ rustdesk__group }}
+Restart=always
+# Restart service after 10 seconds if node service crashes
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

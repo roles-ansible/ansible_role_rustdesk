@@ -1,0 +1,75 @@
+---
+- name: Dependency block
+  block:
+    - name: Update apt cache
+      become: true
+      ansible.builtin.apt:
+        cache_valid_time: 3600
+        update_cache: true
+      register: _pre_update_apt_cache
+      until: _pre_update_apt_cache is succeeded
+      when:
+        - ansible_pkg_mgr == "apt"
+
+- name: Install rustdesk block
+  when: (not ansible_check_mode and (rustdesk__hbbr_active_version.stdout != rustdesk__version_target))
+  block:
+    - name: Create temporary download directory
+      become: true
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: dl_hbx
+      register: rustdesk__dl_dir
+
+    - name: Download and extract rustdesk
+      become: true
+      ansible.builtin.unarchive:
+        creates: "{{ rustdesk__dl_dir.path }}/{{ rustdesk__arch }}"
+        dest: "{{ rustdesk__dl_dir.path }}"
+        remote_src: true
+        group: "{{ rustdesk__group }}"
+        owner: "{{ rustdesk__user }}"
+        src: "{{ rustdesk__dl_url }}"
+      register: _download_archive
+      until: _download_archive is succeeded
+      retries: 5
+      delay: 2
+
+    - name: Propagate rustdesk hbbr binary
+      become: true
+      ansible.builtin.copy:
+        src: "{{ rustdesk__dl_dir.path }}/{{ rustdesk__arch }}/hbbr"
+        remote_src: true
+        dest: "{{ rustdesk__hbbr_executable_path }}"
+        mode: 0755
+        owner: root
+        group: root
+      notify:
+        - 'systemctl restart rustdesk-hbbs'
+        - 'systemctl restart rustdesk-hbbr'
+
+    - name: Propagate rustdesk hbbs binary
+      become: true
+      ansible.builtin.copy:
+        src: "{{ rustdesk__dl_dir.path }}/{{ rustdesk__arch }}/hbbs"
+        remote_src: true
+        dest: "{{ rustdesk__hbbs_executable_path }}"
+        mode: 0755
+        owner: root
+        group: root
+      notify:
+        - 'systemctl restart rustdesk-hbbs'
+        - 'systemctl restart rustdesk-hbbr'
+
+    - name: Propagate rustdesk rustdesk-utils binary
+      become: true
+      ansible.builtin.copy:
+        src: "{{ rustdesk__dl_dir.path }}/{{ rustdesk__arch }}/rustdesk-utils"
+        remote_src: true
+        dest: "{{ rustdesk__rustdesk_utils_executable_path }}"
+        mode: 0755
+        owner: root
+        group: root
+      notify:
+        - 'systemctl restart rustdesk-hbbs'
+        - 'systemctl restart rustdesk-hbbr'

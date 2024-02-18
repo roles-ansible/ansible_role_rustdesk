@@ -1,0 +1,54 @@
+---
+- name: "Setup systemd service for RustDesk Signal Server"
+  become: true
+  ansible.builtin.template:
+    src: 'rustdesk-hbbs.service.j2'
+    dest: '/lib/systemd/system/rustdesk-hbbs.service'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  notify:
+    - 'systemctl restart rustdesk-hbbs'
+    - 'systemctl daemon-reload'
+
+- name: "Setup systemd service for RustDesk Relay Server"
+  become: true
+  ansible.builtin.template:
+    src: 'rustdesk-hbbr.service.j2'
+    dest: '/lib/systemd/system/rustdesk-hbbr.service'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  notify:
+    - 'systemctl restart rustdesk-hbbr'
+    - 'systemctl daemon-reload'
+
+- name: "Reload systemd"
+  become: true
+  ansible.builtin.systemd:
+    daemon_reload: true
+  notify:
+    - 'systemctl restart rustdesk-hbbs'
+    - 'systemctl restart rustdesk-hbbr'
+
+- name: "Start and enable rustdesk signal server"
+  become: true
+  ansible.builtin.systemd:
+    name: 'rustdesk-hbbs'
+    state: 'started'
+    enabled: true
+  when: ansible_service_mgr == "systemd"
+  notify:
+    - 'systemctl restart rustdesk-hbbs'
+    - 'systemctl restart rustdesk-hbbr'
+
+- name: "Start and enable rustdesk relay server"
+  become: true
+  ansible.builtin.systemd:
+    name: 'rustdesk-hbbr'
+    state: 'started'
+    enabled: true
+  when: ansible_service_mgr == "systemd"
+  notify:
+    - 'systemctl restart rustdesk-hbbs'
+    - 'systemctl restart rustdesk-hbbr'

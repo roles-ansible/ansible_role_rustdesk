@@ -1,0 +1,22 @@
+{{ ansible_managed | comment }}
+[Unit]
+Description=Rustdesk Relay Server
+After=network.target rustdesk-hbbs.service
+
+[Service]
+Type=simple
+{% if rustdesk__require_key | bool %}
+ExecStart={{ rustdesk__hbbr_executable_path }} --port {{ rustdesk__relay_server_port }} -k _
+{% else %}
+ExecStart={{ rustdesk__hbbr_executable_path }} --port {{ rustdesk__relay_server_port }}
+{% endif %}
+WorkingDirectory={{ rustdesk__home }}
+User={{ rustdesk__user }}
+Group={{ rustdesk__group }}
+Restart=always
+# Restart service after 10 seconds if node service crashes
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+
