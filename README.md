@@ -37,5 +37,5 @@ To kommunikate with rustdesk, you need to open these Ports on the rustdesk serve
 
  License
 =========
-+ This Ansible role us under [MIT License](LICENSE).
++ This Ansible role is under [MIT License](LICENSE).
 + Please feel free to open a issue or pull-request.
