@@ -37,7 +37,7 @@
     name: 'rustdesk-hbbs'
     state: 'started'
     enabled: true
-  when: ansible_service_mgr == "systemd"
+  when: ansible_facts.service_mgr == 'systemd'
   notify:
     - 'systemctl restart rustdesk-hbbs'
     - 'systemctl restart rustdesk-hbbr'
@@ -48,7 +48,7 @@
     name: 'rustdesk-hbbr'
     state: 'started'
     enabled: true
-  when: ansible_service_mgr == "systemd"
+  when: ansible_facts.service_mgr == 'systemd'
   notify:
     - 'systemctl restart rustdesk-hbbs'
     - 'systemctl restart rustdesk-hbbr'
