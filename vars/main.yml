@@ -7,10 +7,12 @@ rustdesk__go_arch_map:
   armv6l: 'armv7'
   armv5l: 'armv7'
 
-rustdesk__arch: "{{ rustdesk__go_arch_map[ansible_architecture] | default(ansible_architecture) }}"
-rustdesk__dl_filename: "rustdesk-server-{{ ansible_system }}-{{ rustdesk__arch }}"
+rustdesk__arch: >-
+  {{ rustdesk__go_arch_map[ansible_facts['architecture']]
+     | default(ansible_facts['architecture']) }}
+rustdesk__dl_filename: "rustdesk-server-{{ ansible_facts['system'] }}-{{ rustdesk__arch }}"
 rustdesk__dl_url: "https://github.com/rustdesk/rustdesk-server/releases/download/{{ rustdesk__version_target }}/{{ rustdesk__dl_filename }}.zip"
 
 # versionscheck
-playbook_version_number: 5
+playbook_version_number: 6
 playbook_version_path: 'role_l3d.rustdesk.version'
