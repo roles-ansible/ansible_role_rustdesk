@@ -9,7 +9,7 @@
       register: _pre_update_apt_cache
       until: _pre_update_apt_cache is succeeded
       when:
-        - ansible_pkg_mgr == "apt"
+        - ansible_facts['pkg_mgr'] == "apt"
 
 - name: Install rustdesk block
   when: (not ansible_check_mode and (rustdesk__hbbr_active_version.stdout != rustdesk__version_target))
